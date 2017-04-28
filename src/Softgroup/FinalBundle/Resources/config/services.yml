@@ -1,0 +1,4 @@
+services:
+#    softgroup_final.example:
+#        class: Softgroup\FinalBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

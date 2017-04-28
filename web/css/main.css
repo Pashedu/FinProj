@@ -1,0 +1,9 @@
+.companies > tbody > tr > th
+{
+    background-color: lightgoldenrodyellow;
+}
+.glyphicon-plus-sign,
+.glyphicon-hand-right
+{
+    font-size: large;
+}

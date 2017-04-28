@@ -1,0 +1,8 @@
+softgroup_final:
+    resource: "@SoftgroupFinalBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation

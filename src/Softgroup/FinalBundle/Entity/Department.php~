@@ -1,0 +1,203 @@
+<?php
+
+namespace Softgroup\FinalBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Department
+ *
+ * @ORM\Table(name="department")
+ * @ORM\Entity(repositoryClass="Softgroup\FinalBundle\Repository\DepartmentRepository")
+ */
+class Department
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     */
+    private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="createdate", type="datetime")
+     */
+    private $createdate;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Employee", mappedBy="departments")
+     */
+    private $employees;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Department", inversedBy="subrooms")
+     * @ORM\JoinColumn(name="mainroom_id", referencedColumnName="id")
+     */
+    private $mainroom;
+
+    /**
+     *@ORM\OneToMany(targetEntity="Department", mappedBy="mainroom")
+     */
+    private $subrooms;
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return Department
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Department
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set createdate
+     *
+     * @param \DateTime $createdate
+     * @return Department
+     */
+    public function setCreatedate($createdate)
+    {
+        $this->createdate = $createdate;
+
+        return $this;
+    }
+
+    /**
+     * Get createdate
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedate()
+    {
+        return $this->createdate;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->employees = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->subrooms = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add employees
+     *
+     * @param \Softgroup\FinalBundle\Entity\Employee $employees
+     * @return Department
+     */
+    public function addEmployee(\Softgroup\FinalBundle\Entity\Employee $employees)
+    {
+        $this->employees[] = $employees;
+
+        return $this;
+    }
+
+    /**
+     * Remove employees
+     *
+     * @param \Softgroup\FinalBundle\Entity\Employee $employees
+     */
+    public function removeEmployee(\Softgroup\FinalBundle\Entity\Employee $employees)
+    {
+        $this->employees->removeElement($employees);
+    }
+
+    /**
+     * Get employees
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEmployees()
+    {
+        return $this->employees;
+    }
+
+    /**
+     * Set mainroom
+     *
+     * @param \Softgroup\FinalBundle\Entity\Department $mainroom
+     * @return Department
+     */
+    public function setMainroom(\Softgroup\FinalBundle\Entity\Department $mainroom = null)
+    {
+        $this->mainroom = $mainroom;
+
+        return $this;
+    }
+
+    /**
+     * Get mainroom
+     *
+     * @return \Softgroup\FinalBundle\Entity\Department 
+     */
+    public function getMainroom()
+    {
+        return $this->mainroom;
+    }
+}
