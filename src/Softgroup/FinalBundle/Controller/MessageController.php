@@ -6,6 +6,7 @@ use Softgroup\FinalBundle\Entity\Message;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -74,14 +75,43 @@ class MessageController extends Controller
         }
         else return $this->redirectToRoute('message_new');
     }
+    /**
+     * Lists target message
+     *
+     * @Route("/secret/{url}/passcheck", name="password_check")
+     * @Method({"GET", "POST"})
+     */
+    public function passAction(Request $request, $url)
+    {
+        $form = $this->createFormBuilder()
+            ->add('Password', PasswordType::class)
+            ->getForm();
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($url)
+            {
+                $em = $this->getDoctrine()->getManager();
+                $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
+                $message->setPassword(null);
+                $em->persist($message);
+                $em->flush();
+                return $this->redirectToRoute('message_target',array('url'=>$url));
+            }
+            return new Response("Pass is checked for ".$url);
+        }
+        return $this->render('message/password.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
     /**
      * Lists target message
      *
      * @Route("/secret/{url}", name="message_target")
      * @Method("GET")
      */
-    public function targetAction($url)
+    public function targetAction($url, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
@@ -108,7 +138,12 @@ class MessageController extends Controller
             if($message->getDeletedate()){
                 return $this->redirectToRoute('message_new');
             }
-            else {
+            else
+            {
+                if ($message->getPassword())
+                {
+                    return $this->redirectToRoute('password_check', array('url'=>$message->getUrl()));
+                }
                 $deletedMessage = $message->getMessagetext();
                 $message->setDeletedate($nowTime);
                 $em = $this->getDoctrine()->getManager();
@@ -117,7 +152,7 @@ class MessageController extends Controller
                 if($message->getEmail()) {
                     $emailMessage = \Swift_Message::newInstance()
                         ->setSubject('TestMail')
-                        ->setFrom('pashedu@sendgrid.com')
+                        ->setFrom('admin@onesread.host-panel.net')
                         ->setTo($message->getEmail())
                         ->setBody('Test Email Message '.$deletedMessage);
                     $this->get('mailer')->send($emailMessage);

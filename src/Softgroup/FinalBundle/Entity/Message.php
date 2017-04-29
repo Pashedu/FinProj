@@ -74,6 +74,19 @@ class Message
      */
     private $email;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="creatorip", type="string", length=255, nullable=true)
+     */
+    private $creatorip;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="readerip", type="string", length=255, nullable=true)
+     */
+    private $readerip;
 
     /**
      * Get id
