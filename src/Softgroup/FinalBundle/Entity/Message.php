@@ -93,6 +93,21 @@ class Message
      *
      * @return integer 
      */
+
+    private $plainPassword;
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($plainpass)
+    {
+        $this->plainPassword=$plainpass;
+
+        return $this;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -257,6 +272,49 @@ class Message
     public function getEmail()
     {
         return $this->email;
+    }
+    /**
+     * Set creatorip
+     *
+     * @param string $ip
+     * @return Message
+     */
+    public function setCreatorip($ip)
+    {
+        $this->creatorip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * Get creatorip
+     *
+     * @return string
+     */
+    public function getCreatorip()
+    {
+        return $this->creatorip;
+    }
+    /**
+     * Set readerip
+     *
+     * @param string $ip
+     * @return Message
+     */
+    public function setReaderip($ip)
+    {
+        $this->readerip = $ip;
+
+        return $this;
+    }
+    /**
+     * Get readerip
+     *
+     * @return string
+     */
+    public function getReaderip()
+    {
+        return $this->readerip;
     }
 
     /**

@@ -46,6 +46,9 @@ class MessageController extends Controller
                 $index=($i+ord($rawHash[$index]))%strlen($rawHash);
             }
             $message->setUrl(implode($urlString));
+            $message->setCreatorip($request->getClientIp());
+
+            $message->setPassword(password_hash($message->getPlainPassword(),PASSWORD_DEFAULT));
             $em->persist($message);
             $em->flush();
             $request->getSession()->set('url',$message->getUrl());
@@ -90,7 +93,10 @@ class MessageController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($url)
+            $em = $this->getDoctrine()->getManager();
+            $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
+            $task = $form->getData();
+            if (crypt($task['Password'],$message->getPassword())==$message->getPassword())
             {
                 $em = $this->getDoctrine()->getManager();
                 $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
@@ -146,6 +152,7 @@ class MessageController extends Controller
                 }
                 $deletedMessage = $message->getMessagetext();
                 $message->setDeletedate($nowTime);
+                $message->setReaderip($request->getClientIp());
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($message);
                 $em->flush();

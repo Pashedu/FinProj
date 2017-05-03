@@ -2,8 +2,9 @@
 
 namespace Softgroup\FinalBundle\Form;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
@@ -15,7 +16,17 @@ class MessageType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('messagetext')->add('password')->add('email');
+        $builder->add('messagetext')
+            ->add('plainPassword', RepeatedType::class, array(
+
+                'type' => PasswordType::class,
+                'invalid_message' => 'The password fields must match.',
+                'required' => false,
+                'attr' => array('autocomplete' => 'off'),
+                'first_options'  => array('label' => 'Password'),
+                'second_options' => array('label' => 'Repeat Password'),
+            ))
+            ->add('email');
         $builder->add('TTL', ChoiceType::class, array(
             'choice_list' => new ChoiceList(
                 array('0','1','2','3','4','5'),
