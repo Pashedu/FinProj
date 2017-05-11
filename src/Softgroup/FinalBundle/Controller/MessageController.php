@@ -47,8 +47,9 @@ class MessageController extends Controller
             }
             $message->setUrl(implode($urlString));
             $message->setCreatorip($request->getClientIp());
-
-            $message->setPassword(password_hash($message->getPlainPassword(),PASSWORD_DEFAULT));
+            if (!is_null($message->getPlainPassword())) {
+                $message->setPassword(password_hash($message->getPlainPassword(), PASSWORD_DEFAULT));
+            }
             $em->persist($message);
             $em->flush();
             $request->getSession()->set('url',$message->getUrl());
@@ -78,39 +79,7 @@ class MessageController extends Controller
         }
         else return $this->redirectToRoute('message_new');
     }
-    /**
-     * Lists target message
-     *
-     * @Route("/secret/{url}/passcheck", name="password_check")
-     * @Method({"GET", "POST"})
-     */
-    public function passAction(Request $request, $url)
-    {
-        $form = $this->createFormBuilder()
-            ->add('Password', PasswordType::class)
-            ->getForm();
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
-            $task = $form->getData();
-            if (crypt($task['Password'],$message->getPassword())==$message->getPassword())
-            {
-                $em = $this->getDoctrine()->getManager();
-                $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
-                $message->setPassword(null);
-                $em->persist($message);
-                $em->flush();
-                return $this->redirectToRoute('message_target',array('url'=>$url));
-            }
-            return new Response("Pass is checked for ".$url);
-        }
-        return $this->render('message/password.html.twig', array(
-            'form' => $form->createView(),
-        ));
-    }
     /**
      * Lists target message
      *
@@ -173,5 +142,37 @@ class MessageController extends Controller
             throw new NotFoundHttpException('Sorry not existing!');
         }
     }
+    /**
+     * Lists target message
+     *
+     * @Route("/secret/{url}/passcheck", name="password_check")
+     * @Method({"GET", "POST"})
+     */
+    public function passAction(Request $request, $url)
+    {
+        $form = $this->createFormBuilder()
+            ->add('Password', PasswordType::class)
+            ->getForm();
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
+            $task = $form->getData();
+            if (crypt($task['Password'],$message->getPassword())==$message->getPassword())
+            {
+                $em = $this->getDoctrine()->getManager();
+                $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
+                $message->setPassword(null);
+                $em->persist($message);
+                $em->flush();
+                return $this->redirectToRoute('message_target',array('url'=>$url));
+            }
+            return new Response("Pass is checked for ".$url);
+        }
+        return $this->render('message/password.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
 }

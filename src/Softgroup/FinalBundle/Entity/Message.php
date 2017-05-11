@@ -4,6 +4,7 @@ namespace Softgroup\FinalBundle\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="message")
  * @ORM\Entity(repositoryClass="Softgroup\FinalBundle\Repository\MessageRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Gedmo\Loggable
  */
 class Message
 {
@@ -26,7 +28,7 @@ class Message
 
     /**
      * @var string
-     *
+     * @Gedmo\Versioned
      * @ORM\Column(name="messagetext", type="text")
      */
     private $messagetext;
@@ -76,14 +78,14 @@ class Message
 
     /**
      * @var string
-     *
+     * @Gedmo\Versioned
      * @ORM\Column(name="creatorip", type="string", length=255, nullable=true)
      */
     private $creatorip;
 
     /**
      * @var string
-     *
+     * @Gedmo\Versioned
      * @ORM\Column(name="readerip", type="string", length=255, nullable=true)
      */
     private $readerip;
