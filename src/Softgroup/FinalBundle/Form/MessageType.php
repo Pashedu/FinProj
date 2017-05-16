@@ -27,7 +27,7 @@ class MessageType extends AbstractType
                 'second_options' => array('label' => 'Repeat Password'),
             ))
             ->add('email');
-        $builder->add('TTL', 'Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList', array(
+        $builder->add('TTL', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'choice_list' => new ChoiceList(
                 array('0','1','2','3','4','5'),
                 array('set TTL','1 hour','2 hours','1 day','3 days','1 week')
