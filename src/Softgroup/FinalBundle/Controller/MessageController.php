@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Message controller.
  *
- * @Route("message")
+ * @Route("/")
  */
 class MessageController extends Controller
 {
@@ -36,7 +36,7 @@ class MessageController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $routeString = 'ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuwxyz0123456789';
-            $timeAsSalt = $_SERVER["REQUEST_TIME_FLOAT"];
+            $timeAsSalt =  $request->get("REQUEST_TIME_FLOAT");// PHP super global should never be used $_SERVER["REQUEST_TIME_FLOAT"];
             $rawHash=hash('sha1',$message->getMessagetext().$timeAsSalt,false);
             $index=(rand(0,strlen($routeString)))%strlen($rawHash);
             $urlString=[];
@@ -57,7 +57,7 @@ class MessageController extends Controller
             return $this->redirectToRoute('show_url');
         }
 
-        return $this->render('message/new.html.twig', array(
+        return $this->render('SoftgroupFinalBundle:message:new.html.twig', array(
             'message' => $message,
             'form' => $form->createView(),
         ));
@@ -79,7 +79,6 @@ class MessageController extends Controller
         }
         else return $this->redirectToRoute('message_new');
     }
-
     /**
      * Lists target message
      *
@@ -88,26 +87,18 @@ class MessageController extends Controller
      */
     public function targetAction($url, Request $request)
     {
+        date_default_timezone_set('UTC');
         $em = $this->getDoctrine()->getManager();
         $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
         $nowTime = new \DateTime('now', new \DateTimeZone('UTC'));
-
         if($message) {
-            if( $message->getDeleteto())
-            {
-                $messageTime = $message->getDeleteto();
-
-
-                if($messageTime > $nowTime)
-                {
-                    if(!$message->getDeletedate())
-                    {
+            $messageTime = $message->getDeleteto();
+            if(!$message->getDeletedate()&&($messageTime)) {
+                if($messageTime < $nowTime) {
                         $message->setDeletedate($nowTime);
                         $em = $this->getDoctrine()->getManager();
                         $em->persist($message);
                         $em->flush();
-                    }
-                    return $this->redirectToRoute('message_new');
                 }
             }
             if($message->getDeletedate()){
@@ -115,22 +106,23 @@ class MessageController extends Controller
             }
             else
             {
-                if ($message->getPassword())
-                {
-                    return $this->redirectToRoute('password_check', array('url'=>$message->getUrl()));
+                $session=new Session();
+                if (($message->getPassword())&&(!$session->get('passcheck'))) {
+                    return $this->redirectToRoute('password_check', array('url' => $message->getUrl()));
                 }
+                $session->clear();
                 $deletedMessage = $message->getMessagetext();
-                $message->setDeletedate($nowTime);
+                if(!$message->getDeleteto()) {$message->setDeletedate($nowTime);}
                 $message->setReaderip($request->getClientIp());
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($message);
                 $em->flush();
-                if($message->getEmail()) {
+                if ($message->getEmail()) {
                     $emailMessage = \Swift_Message::newInstance()
                         ->setSubject('TestMail')
                         ->setFrom('admin@onesread.host-panel.net')
                         ->setTo($message->getEmail())
-                        ->setBody('Test Email Message '.$deletedMessage);
+                        ->setBody('Test Email Message ' . $deletedMessage);
                     $this->get('mailer')->send($emailMessage);
                 }
                 return new Response(
@@ -138,9 +130,7 @@ class MessageController extends Controller
                 );
             }
         }
-        else {
-            throw new NotFoundHttpException('Sorry not existing!');
-        }
+        throw new NotFoundHttpException('Sorry not existing!');
     }
     /**
      * Lists target message
@@ -151,27 +141,23 @@ class MessageController extends Controller
     public function passAction(Request $request, $url)
     {
         $form = $this->createFormBuilder()
-            ->add('Password', PasswordType::class)
+            ->add('Password', 'Symfony\Component\Form\Extension\Core\Type\PasswordType')
             ->getForm();
-
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
             $task = $form->getData();
             if (crypt($task['Password'],$message->getPassword())==$message->getPassword())
             {
-                $em = $this->getDoctrine()->getManager();
-                $message = $em->getRepository('SoftgroupFinalBundle:Message')->findOneByUrl($url);
-                $message->setPassword(null);
-                $em->persist($message);
-                $em->flush();
+                $session = new Session();
+                $session->clear();
+                $session->set('passcheck',true);
                 return $this->redirectToRoute('message_target',array('url'=>$url));
             }
             return new Response("Pass is checked for ".$url);
         }
-        return $this->render('message/password.html.twig', array(
+        return $this->render('SoftgroupFinalBundle:message:password.html.twig', array(
             'form' => $form->createView(),
         ));
     }
