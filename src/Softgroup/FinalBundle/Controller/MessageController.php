@@ -72,9 +72,92 @@ class MessageController extends Controller
         if($url) {
             $request->getSession()->remove('url');
             return new Response(
-                '<html><body> Note link ready  '
-                . '<span>' . $this->generateUrl('message_new', array(), UrlGeneratorInterface::ABSOLUTE_URL).'secret/'.$url .
-                '</span><br><a href="'.$this->generateUrl('message_new').'">to main</a></body></html>'
+
+                '<html>
+                <meta charset="UTF-8" />
+                <meta http-equiv="x-ua-compatible" content="IE=edge" />
+                <title>Welcome!</title>
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+                <link type="text/css" rel="stylesheet" href="{{ asset(\'css/main.css\') }}">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                <link rel="icon" type="image/x-icon" href="{{ asset(\'favicon.ico\') }}" />
+                <style type="text/css">
+                    #blockBody{
+                        min-width: 1100px;
+                        background-color: #F5F5DC;
+                    }
+                    #header{
+                        border: 1px solid black;
+                        left: 0; right: 0;
+                        height: 120px;
+                        margin: 10px;
+                    }
+                    #menu{
+                        border: 1px solid black;
+                        left: 0; right: 0;
+                        height: 40px;
+                        margin: 10px;
+                        padding: 20px 20px 40px 20px;
+                    }
+                    #center{
+                        border: 1px solid black;
+                        min-height: 550px;
+                        margin-left: 273px;
+                        margin-right: 273px;
+                        background-color: #F5F5DC;
+                    }
+                    #leftBlock{
+                        border: 1px solid black;
+                        width: 250px;
+                        float: left;
+                        margin-left: 10px;
+                        min-height:550px;
+                    }
+                    #rightBlock{
+                        border: 1px solid black;
+                        width: 250px;
+                        float: right;
+                        margin-right: 10px;
+                        min-height:550px;
+                    }
+                    #footer{
+                        border: 1px solid black;
+                        left: 0; right: 0; bottom: 0px;
+                        height: 150px;
+                        clear: both;
+                        margin: 10px;
+                    }
+                    h1,h2,h4{
+                        text-align: center;
+                    }
+                </style>
+                
+                <body>
+                
+                
+                <div id="blockBody">
+                    <div id="header">
+                        <h1>OnesRead</h1>
+                        <p style="text-align: center">Відправка повідомлень, які будуть самоліквідуватися після читання</p>
+                    </div>
+                    <div id="menu">
+                    </div>
+                    <div id="leftBlock">
+                    </div>
+                    <div id="rightBlock">
+                    </div>
+                    <div id="center">
+                         <h2>Ваше повідомлення сформоване по адресу : </h2> '
+                . '<span><h4>' . $this->generateUrl('message_new', array(), UrlGeneratorInterface::ABSOLUTE_URL).'secret/'.$url .
+                '</h4></span><br><a href="'.$this->generateUrl('message_new').'">to main</a>
+                    </div>
+                    <div id="footer">
+                    </div>
+                </div>
+               </body>
+             </html>'
             );
         }
         else return $this->redirectToRoute('message_new');
@@ -95,10 +178,10 @@ class MessageController extends Controller
             $messageTime = $message->getDeleteto();
             if(!$message->getDeletedate()&&($messageTime)) {
                 if($messageTime < $nowTime) {
-                        $message->setDeletedate($nowTime);
-                        $em = $this->getDoctrine()->getManager();
-                        $em->persist($message);
-                        $em->flush();
+                    $message->setDeletedate($nowTime);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($message);
+                    $em->flush();
                 }
             }
             if($message->getDeletedate()){
@@ -125,8 +208,86 @@ class MessageController extends Controller
                         ->setBody('Test Email Message ' . $deletedMessage);
                     $this->get('mailer')->send($emailMessage);
                 }
-                return new Response(
-                    '<html><body>' . $deletedMessage . '</body></html>'
+                return new Response('
+                <meta charset="UTF-8" />
+                <meta http-equiv="x-ua-compatible" content="IE=edge" />
+                <title>Welcome!</title>
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+                <link type="text/css" rel="stylesheet" href="{{ asset(\'css/main.css\') }}">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                <link rel="icon" type="image/x-icon" href="{{ asset(\'favicon.ico\') }}" />
+                <style type="text/css">
+                <style type="text/css">
+                    #blockBody{
+                        min-width: 1100px;
+                        background-color: #F5F5DC;
+                    }
+                    #header{
+                        border: 1px solid black;
+                        left: 0; right: 0;
+                        height: 120px;
+                        margin: 10px;
+                    }
+                    #menu{
+                        border: 1px solid black;
+                        left: 0; right: 0;
+                        height: 40px;
+                        margin: 10px;
+                        padding: 20px 20px 40px 20px;
+                    }
+                    #center{
+                        border: 1px solid black;
+                        min-height: 550px;
+                        margin-left: 273px;
+                        margin-right: 273px;
+                        background-color: #F5F5DC;
+                    }
+                    #leftBlock{
+                        border: 1px solid black;
+                        width: 250px;
+                        float: left;
+                        margin-left: 10px;
+                        min-height:550px;
+                    }
+                    #rightBlock{
+                        border: 1px solid black;
+                        width: 250px;
+                        float: right;
+                        margin-right: 10px;
+                        min-height:550px;
+                    }
+                    #footer{
+                        border: 1px solid black;
+                        left: 0; right: 0; bottom: 0px;
+                        height: 150px;
+                        clear: both;
+                        margin: 10px;
+                    }
+                    h1,h2,h4{
+                        text-align: center;
+                    }
+                </style>
+                    <body>
+                      <div id="blockBody">
+                    <div id="header">
+                        <h1>OnesRead</h1>
+                        <p style="text-align: center">Відправка повідомлень, які будуть самоліквідуватися після читання</p>
+                    </div>
+                    <div id="menu">
+                    </div>
+                    <div id="leftBlock">
+                    </div>
+                    <div id="rightBlock">
+                    </div>
+                    <div id="center">
+                         <h2>Ваше повідомлення :</h2></br>' . $deletedMessage . '
+                    </div>
+                    <div id="footer">
+                    </div>
+                </div>  
+                   </body></html>'
                 );
             }
         }
