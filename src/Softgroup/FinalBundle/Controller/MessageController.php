@@ -316,7 +316,88 @@ class MessageController extends Controller
                 $session->set('passcheck',true);
                 return $this->redirectToRoute('message_target',array('url'=>$url));
             }
-            return new Response("Pass is checked for ".$url);
+
+            return new Response('
+                <meta charset="UTF-8" />
+                <meta http-equiv="x-ua-compatible" content="IE=edge" />
+                <title>Welcome!</title>
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+                <link type="text/css" rel="stylesheet" href="{{ asset(\'css/main.css\') }}">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                <link rel="icon" type="image/x-icon" href="{{ asset(\'favicon.ico\') }}" />
+                <style type="text/css">
+                <style type="text/css">
+                    #blockBody{
+                        min-width: 1100px;
+                        background-color: #F5F5DC;
+                    }
+                    #header{
+                        border: 1px solid black;
+                        left: 0; right: 0;
+                        height: 120px;
+                        margin: 10px;
+                    }
+                    #menu{
+                        border: 1px solid black;
+                        left: 0; right: 0;
+                        height: 40px;
+                        margin: 10px;
+                        padding: 20px 20px 40px 20px;
+                    }
+                    #center{
+                        border: 1px solid black;
+                        min-height: 550px;
+                        margin-left: 273px;
+                        margin-right: 273px;
+                        background-color: #F5F5DC;
+                    }
+                    #leftBlock{
+                        border: 1px solid black;
+                        width: 250px;
+                        float: left;
+                        margin-left: 10px;
+                        min-height:550px;
+                    }
+                    #rightBlock{
+                        border: 1px solid black;
+                        width: 250px;
+                        float: right;
+                        margin-right: 10px;
+                        min-height:550px;
+                    }
+                    #footer{
+                        border: 1px solid black;
+                        left: 0; right: 0; bottom: 0px;
+                        height: 150px;
+                        clear: both;
+                        margin: 10px;
+                    }
+                    h1,h2,h4{
+                        text-align: center;
+                    }
+                </style>
+                    <body>
+                      <div id="blockBody">
+                    <div id="header">
+                        <h1>OnesRead</h1>
+                        <p style="text-align: center">Відправка повідомлень, які будуть самоліквідуватися після читання</p>
+                    </div>
+                    <div id="menu">
+                    </div>
+                    <div id="leftBlock">
+                    </div>
+                    <div id="rightBlock">
+                    </div>
+                    <div id="center">
+                         <h2 style="color: red">Невірний пароль!</h2>
+                    </div>
+                    <div id="footer">
+                    </div>
+                </div>  
+                   </body></html>'
+            );
         }
         return $this->render('SoftgroupFinalBundle:message:password.html.twig', array(
             'form' => $form->createView(),
